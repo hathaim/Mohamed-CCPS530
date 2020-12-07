@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+<head>
+<!--	Include Leaflet CSS file in the head section of your document:-->
+	 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+   integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+   crossorigin=""/>
+<!--	Include Leaflet JavaScript file after Leaflet’s CSS:-->
+	<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+   integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+   crossorigin=""></script>
+<!--	Make sure the map container has a defined height(note: if not set, it will set the hight to zero)-->
+	<style>
+		#myMap { 
+			
+			height: 500px;
+			width: 500px;
+		}
+	</style>
+	
+	
+<meta charset="utf-8">
+<title>CPS 530</title>
+</head>
+<dl>
+	<dt>IP Address</dt>
+	<dd id = "ip"></dd>
+	<dt>Latitude:</dt>
+	<dd id = "latitude"></dd>
+	<dt>Longitude:</dt>
+	<dd id = "longitude"></dd>
+	<dt>Postal Code:</dt>
+	<dd id = "postal_code"></dd>
+	<dt>City:</dt>
+	<dd id = "city"></dd>
+	<dt>Region:</dt>
+	<dd id = "region"></dd>
+	<dt>Country:</dt>
+	<dd id = "country"></dd>
+</dl>
+
+	
+<!--	leafletjs div-->
+	<div id= "myMap"></div>
+<!--button when clicked will show the data-->
+	
+	
+
+<body>
+	<script>
+// the main function to get the ip, from the scripts bellow
+
+
+function getIP(json) {
+
+
+var xmlhttp = new XMLHttpRequest();
+
+
+const ip_address = json.ip; 
+document.getElementById('ip').innerHTML = ip_address;
+
+const APIKey = 'f58ff150-8736-421b-94fd-56462b0021c0';
+var url = "https://api.ipfind.com/?ip=" + ip_address + "&auth=" + APIKey ;
+		
+		
+		
+
+	
+
+xmlhttp.onreadystatechange = function() {
+if (this.readyState == 4 && this.status == 200) {
+      var result = JSON.parse(this.responseText);
+      console.log(result);
+	// gets the results from accessing the ip address
+	document.getElementById("latitude").textContent = result.latitude;
+	document.getElementById("longitude").textContent = result.longitude;
+	document.getElementById("city").textContent = result.city;
+	document.getElementById("region").textContent = result.region;
+	document.getElementById("country").textContent = result.country;
+	document.getElementById("postal_code").textContent = result.postal_code;
+
+	
+//// working on the leafletjs.com maps
+//		//'L' is from the leaflet library
+//		//latitude, longitude and zoom
+var mymap = L.map('myMap').setView([document.getElementById('latitude').innerHTML,document.getElementById('longitude').innerHTML], 18);
+var mark  = L.marker([document.getElementById('latitude').innerHTML,document.getElementById('longitude').innerHTML]).addTo(mymap);
+const attribution = '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors';
+		
+const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+const tiles   = L.tileLayer(tileUrl, {attribution}).addTo(mymap);
+	
+
+    }
+};
+
+xmlhttp.open("GET", url, true);
+xmlhttp.send();
+
+}
+
+
+
+</script>
+<!--	for the ip address got the code from : https://www.codegrepper.com/code-examples/javascript/how+to+get+user+ip+address+in+javascript-->
+<script src="https://api.ipify.org?format=jsonp&callback=getIP"></script>
+
+<script type="application/javascript" src="https://api.ipify.org?format=jsonp&callback=getIP"> </script>
+</body>
+</html>
